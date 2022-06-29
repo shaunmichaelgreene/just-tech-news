@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
     .then(dbPostData => {
       const posts = dbPostData.map(post => post.get({ plain: true }));
 
-      res.render('homepage', { posts });
+      res.render('homepage', { posts, loggedIn: req.session.loggedIn });
     })
     .catch(err => {
       console.log(err);
@@ -82,23 +82,17 @@ router.get('/post/:id', (req, res) => {
           }
 
           // serialize the data
-          const post = {
-              id: 1,
-              post_url: 'https://handlebarsjs.com/guide/',
-              title: 'Handlebars Docs',
-              created_at: new Date(),
-              vote_count: 10,
-              user: {
-                  username: 'test_user'
-                }
-            };
-
+          const post = dbPostData.get({ plain: true });
+            
+          //pass data to template
             res.render('single-post', { post });
         })
+
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
         
-});
+    });
+
 module.exports = router;
